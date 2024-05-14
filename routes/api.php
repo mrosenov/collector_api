@@ -1,8 +1,8 @@
 <?php
 
+use App\Http\Controllers\v1\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\api\v1\AuthController;
 
 /*
 |--------------------------------------------------------------------------
