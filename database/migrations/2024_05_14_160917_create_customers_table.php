@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->id();
+            $table->engine = 'InnoDB';
+
+            $table->integerIncrements('id');
             $table->string('name');
             $table->enum('type', ['person','company']);
             $table->string('phone')->unique();

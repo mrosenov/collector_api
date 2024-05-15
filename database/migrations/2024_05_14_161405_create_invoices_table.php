@@ -12,13 +12,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('invoices', function (Blueprint $table) {
-            $table->id();
-            $table->integer('customer_id');
+            $table->engine = 'InnoDB';
+
+            $table->integerIncrements('id');
+            $table->unsignedInteger('customer_id')->index();
             $table->integer('total');
             $table->enum('status', ['billed', 'paid', 'void']);
             $table->dateTime('billed_date');
             $table->dateTime('paid_date')->nullable();
             $table->timestamps();
+
+            $table->foreign('customer_id')->references('id')->on('customers')->onDelete('cascade');
         });
     }
 
