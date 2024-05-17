@@ -22,18 +22,11 @@ class UpdateCustomerRequest extends FormRequest
      */
     public function rules(): array
     {
-        if ($this->method() == 'PUT') {
-            return [
-                'type' => [Rule::in(['person', 'company', 'Person', 'Company'])],
-                'email' => ['email'],
-            ];
-        }
-        else {
-            return [
-                'type' => [Rule::in(['person', 'company', 'Person', 'Company'])],
-                'email' => ['email'],
-            ];
-        }
+        return [
+            'type' => [Rule::in(['person', 'company'])],
+            'vat' => ['required_if:type,company'],
+            'email' => ['email'],
+        ];
     }
 
     protected function prepareForValidation()

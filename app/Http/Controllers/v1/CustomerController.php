@@ -38,6 +38,17 @@ class CustomerController extends Controller
      */
     public function store(StoreCustomerRequest $request)
     {
+        if (Customer::where('phone', $request->phone)->exists()) {
+            return response(['message' => 'Customer with such phone already exists.', 'status' => 409], 409);
+        }
+
+        if (Customer::where('vat', $request->vat)->exists()) {
+            return response(['message' => 'Customer with such VAT already exists.', 'status' => 409], 409);
+        }
+
+        if (Customer::where('email', $request->email)->exists()) {
+            return response(['message' => 'Customer with such email already exists.', 'status' => 409], 409);
+        }
         return new CustomerResource(Customer::create($request->all()));
     }
 
