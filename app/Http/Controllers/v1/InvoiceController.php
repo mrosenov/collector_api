@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers\v1;
 
+use App\Filters\v1\InvoiceFilter;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\StoreInvoiceRequest;
 use App\Http\Requests\v1\UpdateInvoiceRequest;
+use App\Http\Resources\v1\InvoiceCollection;
+use App\Http\Resources\v1\InvoiceResource;
 use App\Models\Invoice;
+use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $filter = new InvoiceFilter();
+        $filterItems = $filter->transform($request);
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $invoices = Invoice::where($filterItems);
+
+        return new InvoiceCollection($invoices->paginate()->appends($request->query()));
     }
 
     /**
@@ -30,23 +31,21 @@ class InvoiceController extends Controller
      */
     public function store(StoreInvoiceRequest $request)
     {
-        //
+        return new InvoiceResource(Invoice::create($request->all()));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Invoice $invoice)
+    public function show(Request $request, Invoice $invoice)
     {
-        //
-    }
+        $includeCustomer = $request->query('includeCustomer');
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Invoice $invoice)
-    {
-        //
+        if ($includeCustomer) {
+            return new InvoiceResource($invoice->loadMissing('customer'));
+        }
+
+        return new InvoiceResource($invoice);
     }
 
     /**
@@ -54,7 +53,9 @@ class InvoiceController extends Controller
      */
     public function update(UpdateInvoiceRequest $request, Invoice $invoice)
     {
-        //
+        $invoice->update($request->all());
+
+        return response(['message' => 'Invoice updated successfully.', 'status' => 200], 200);
     }
 
     /**
@@ -62,6 +63,8 @@ class InvoiceController extends Controller
      */
     public function destroy(Invoice $invoice)
     {
-        //
+        $invoice->delete();
+
+        return response(['message' => 'Invoice deleted successfully.', 'status' => 200], 200);
     }
 }
