@@ -21,7 +21,8 @@ class InvoiceResource extends JsonResource
             'status' => $this->status,
             'billedDate' => $this->billed_date,
             'paidDate' => $this->paid_date,
-            'customer' => $this->whenLoaded('customer')
+            'customer' => $this->whenLoaded('customer'),
+            'products' => InvoiceProductResource::collection($this->whenLoaded('products')),
         ];
     }
 }

@@ -31,7 +31,24 @@ class InvoiceController extends Controller
      */
     public function store(StoreInvoiceRequest $request)
     {
-        return new InvoiceResource(Invoice::create($request->all()));
+        $invoice = Invoice::create([
+            'customer_id' => $request->input('customerId'),
+            'total' => $request->input('total'),
+            'status' => $request->input('status'),
+            'billed_date' => $request->input('billedDate'),
+            'paid_date' => $request->input('paidDate'),
+        ]);
+
+        foreach ($request->products as $product) {
+            $invoice->products()->create([
+                'product_id' => $product['productId'],
+                'quantity' => $product['quantity'],
+                'price' => $product['price'],
+                'tax_rate' => $product['taxRate'],
+            ]);
+        }
+
+        return new InvoiceResource($invoice->load('products'));
     }
 
     /**
@@ -40,9 +57,17 @@ class InvoiceController extends Controller
     public function show(Request $request, Invoice $invoice)
     {
         $includeCustomer = $request->query('includeCustomer');
+        $includeProducts = $request->query('includeProducts');
 
+        if ($includeCustomer && $includeProducts) {
+            return new InvoiceResource($invoice->loadMissing(['customer', 'products']));
+        }
         if ($includeCustomer) {
             return new InvoiceResource($invoice->loadMissing('customer'));
+        }
+
+        if ($includeProducts) {
+            return new InvoiceResource($invoice->loadMissing('products'));
         }
 
         return new InvoiceResource($invoice);

@@ -28,6 +28,12 @@ class StoreInvoiceRequest extends FormRequest
             'status' => ['required', 'string', Rule::in(['billed','paid','void'])],
             'billedDate' => ['required', 'date', 'date_format:Y-m-d H:i:s'],
             'paidDate' => ['date', 'date_format:Y-m-d H:i:s', 'required_if:status,paid'],
+            'products' => ['required', 'array'],
+            'products.*.invoiceId' => ['integer', 'exists:invoices,id'],
+            'products.*.productId' => ['integer', 'exists:products,id'],
+            'products.*.quantity' => ['required', 'integer', 'min:1'],
+            'products.*.price' => ['required', 'integer', 'min:0'],
+            'products.*.taxRate' => ['required', 'numeric', 'min:0', 'max:100'],
         ];
     }
 
@@ -36,7 +42,10 @@ class StoreInvoiceRequest extends FormRequest
         $this->merge([
             'customer_id' => $this->customerId,
             'billed_date' => $this->billedDate,
-            'paid_date' => $this->paidDate
+            'paid_date' => $this->paidDate,
+            'products.*.invoice_id' => $this->invoiceId,
+            'products.*.product_id' => $this->productId,
+            'products.*.tax_rate' => $this->taxRate,
         ]);
     }
 }
