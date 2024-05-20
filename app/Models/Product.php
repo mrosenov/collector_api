@@ -12,4 +12,8 @@ class Product extends Model
     protected $fillable = [
         'name', 'description', 'price', 'tax_rate'
     ];
+
+    public function invoiceProducts() {
+        return $this->hasMany(InvoiceProduct::class);
+    }
 }
