@@ -3,6 +3,7 @@
 use App\Http\Controllers\v1\AuthController;
 use App\Http\Controllers\v1\CustomerController;
 use App\Http\Controllers\v1\InvoiceController;
+use App\Http\Controllers\v1\InvoiceProductController;
 use App\Http\Controllers\v1\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\v1', 'middl
     Route::apiResource('customers', CustomerController::class);
     Route::apiResource('invoices', InvoiceController::class);
     Route::apiResource('products', ProductController::class);
+    Route::apiResource('items', InvoiceProductController::class);
 
     Route::post('logout', [AuthController::class, 'logout']);
 });

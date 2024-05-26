@@ -15,6 +15,7 @@ class InvoiceProductResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
+            'id' => $this->id,
             'invoiceId' => $this->invoice_id,
             'productId' => $this->product_id,
             'quantity' => $this->quantity,
