@@ -5,6 +5,8 @@ namespace App\Http\Controllers\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\v1\StorePaymentMethodRequest;
 use App\Http\Requests\v1\UpdatePaymentMethodRequest;
+use App\Http\Resources\v1\PaymentMethodCollection;
+use App\Http\Resources\v1\PaymentMethodResource;
 use App\Models\PaymentMethod;
 
 class PaymentMethodController extends Controller
@@ -14,15 +16,7 @@ class PaymentMethodController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return new PaymentMethodCollection(PaymentMethod::paginate()->appends(request()->query()));
     }
 
     /**
@@ -30,38 +24,67 @@ class PaymentMethodController extends Controller
      */
     public function store(StorePaymentMethodRequest $request)
     {
-        //
+        return new PaymentMethodResource(PaymentMethod::create($request->all()));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(PaymentMethod $paymentMethod)
+    public function show($id)
     {
-        //
-    }
+        $paymentMethod = PaymentMethod::find($id);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(PaymentMethod $paymentMethod)
-    {
-        //
+        if (!$paymentMethod) {
+            return response()->json([
+                'message' => 'Payment Method not found.',
+                'status' => 404
+            ], 404);
+        }
+
+        return new PaymentMethodResource($paymentMethod);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePaymentMethodRequest $request, PaymentMethod $paymentMethod)
+    public function update(UpdatePaymentMethodRequest $request, $id)
     {
-        //
+        $paymentMethod = PaymentMethod::find($id);
+
+        if (!$paymentMethod) {
+            return response()->json([
+                'message' => 'Payment Method not found.',
+                'status' => 404
+            ], 404);
+        }
+
+        $paymentMethod->update($request->all());
+
+        return response()->json([
+            'message' => 'Payment Method successfully updated.',
+            'status' => 202
+        ], 202);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PaymentMethod $paymentMethod)
+    public function destroy($id)
     {
-        //
+        $paymentMethod = PaymentMethod::find($id);
+
+        if (!$paymentMethod) {
+            return response()->json([
+                'message' => 'Payment Method not found.',
+                'status' => 404
+            ], 404);
+        }
+
+        $paymentMethod->delete();
+
+        return response()->json([
+            'message' => 'Payment Method successfully deleted.',
+            'status' => 202
+        ], 202);
     }
 }
