@@ -12,6 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('payments', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
+
             $table->integerIncrements('id');
             $table->unsignedInteger('invoice_id')->index();
             $table->string('ref_id');
@@ -21,6 +23,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->foreign('invoice_id')->references('id')->on('invoices')->onDelete('cascade');
+            $table->foreign('payment_method')->references('id')->on('payment_methods')->onDelete('cascade');
         });
     }
 
