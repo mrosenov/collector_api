@@ -4,6 +4,7 @@ use App\Http\Controllers\v1\AuthController;
 use App\Http\Controllers\v1\CustomerController;
 use App\Http\Controllers\v1\InvoiceController;
 use App\Http\Controllers\v1\InvoiceProductController;
+use App\Http\Controllers\v1\PaymentController;
 use App\Http\Controllers\v1\PaymentMethodController;
 use App\Http\Controllers\v1\ProductController;
 use Illuminate\Http\Request;
@@ -29,6 +30,7 @@ Route::group(['prefix' => 'v1', 'namespace' => 'App\Http\Controllers\v1', 'middl
     Route::apiResource('products', ProductController::class);
     Route::apiResource('items', InvoiceProductController::class);
     Route::apiResource('payment_methods', PaymentMethodController::class);
+    Route::apiResource('payments', PaymentController::class);
 
     Route::post('logout', [AuthController::class, 'logout']);
 });

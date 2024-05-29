@@ -16,7 +16,7 @@ return new class extends Migration
 
             $table->integerIncrements('id');
             $table->unsignedInteger('invoice_id')->index();
-            $table->string('ref_id');
+            $table->string('ref_id')->unique();
             $table->integer('amount');
             $table->dateTime('payment_date');
             $table->unsignedInteger('payment_method')->index();
