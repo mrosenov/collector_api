@@ -3,6 +3,7 @@
 namespace App\Http\Requests\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class UpdateCustomerRequest extends FormRequest
@@ -31,9 +32,11 @@ class UpdateCustomerRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        if ($this->postCode) {
+        foreach ($this->all() as $key => $value) {
+            $transformKey = Str::snake($key);
+
             $this->merge([
-                'postCode' => $this->postCode
+                $transformKey => $value
             ]);
         }
     }

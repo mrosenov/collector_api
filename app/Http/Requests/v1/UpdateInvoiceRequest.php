@@ -3,6 +3,7 @@
 namespace App\Http\Requests\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class UpdateInvoiceRequest extends FormRequest
@@ -33,10 +34,12 @@ class UpdateInvoiceRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $this->merge([
-            'customer_id' => $this->customerId,
-            'billed_date' => $this->billedDate,
-            'paid_date' => $this->paidDate
-        ]);
+        foreach ($this->all() as $key => $value) {
+            $transformKey = Str::snake($key);
+
+            $this->merge([
+                $transformKey => $value
+            ]);
+        }
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class StoreInvoiceRequest extends FormRequest
@@ -39,13 +40,17 @@ class StoreInvoiceRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $this->merge([
-            'customer_id' => $this->customerId,
-            'billed_date' => $this->billedDate,
-            'paid_date' => $this->paidDate,
-            'products.*.invoice_id' => $this->invoiceId,
-            'products.*.product_id' => $this->productId,
-            'products.*.tax_rate' => $this->taxRate,
-        ]);
+        foreach ($this->all() as $key => $value) {
+            $transformKey = Str::snake($key);
+            if (strpos($transformKey, 'products') === 0) {
+                $nestedKeys = explode('.', $key);
+                $firstPart = array_shift($nestedKeys);
+                $transformKey = $firstPart . '.' . implode('.*', $nestedKeys);
+            }
+
+            $this->merge([
+                $transformKey => $value
+            ]);
+        }
     }
 }

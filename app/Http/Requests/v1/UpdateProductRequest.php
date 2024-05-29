@@ -3,6 +3,7 @@
 namespace App\Http\Requests\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 
 class UpdateProductRequest extends FormRequest
 {
@@ -30,8 +31,12 @@ class UpdateProductRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        if ($this->taxRate) {
-            $this->merge(['tax_rate' => $this->taxRate]);
+        foreach ($this->all() as $key => $value) {
+            $transformKey = Str::snake($key);
+
+            $this->merge([
+                $transformKey => $value
+            ]);
         }
     }
 }

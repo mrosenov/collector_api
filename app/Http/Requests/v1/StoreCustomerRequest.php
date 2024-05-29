@@ -3,6 +3,7 @@
 namespace App\Http\Requests\v1;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class StoreCustomerRequest extends FormRequest
@@ -37,6 +38,12 @@ class StoreCustomerRequest extends FormRequest
 
     protected function prepareForValidation()
     {
-        $this->merge(['postcode' => $this->postCode]);
+        foreach ($this->all() as $key => $value) {
+            $transformKey = Str::snake($key);
+
+            $this->merge([
+                $transformKey => $value
+            ]);
+        }
     }
 }
