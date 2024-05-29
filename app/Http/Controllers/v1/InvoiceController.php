@@ -54,8 +54,17 @@ class InvoiceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, Invoice $invoice)
+    public function show(Request $request, $id)
     {
+        $invoice = Invoice::find($id);
+
+        if (!$invoice) {
+            return response()->json([
+                'message' => 'Invoice not found.',
+                'status' => 404
+            ], 404);
+        }
+
         $includeCustomer = $request->query('includeCustomer');
         $includeProducts = $request->query('includeProducts');
 
@@ -76,20 +85,44 @@ class InvoiceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateInvoiceRequest $request, Invoice $invoice)
+    public function update(UpdateInvoiceRequest $request, $id)
     {
+        $invoice = Invoice::find($id);
+
+        if (!$invoice) {
+            return response()->json([
+                'message' => 'Invoice not found.',
+                'status' => 404
+            ], 404);
+        }
+
         $invoice->update($request->all());
 
-        return response(['message' => 'Invoice updated successfully.', 'status' => 200], 200);
+        return response()->json([
+            'message' => 'Invoice updated successfully.',
+            'status' => 202
+        ], 202);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Invoice $invoice)
+    public function destroy($id)
     {
+        $invoice = Invoice::find($id);
+
+        if (!$invoice) {
+            return response()->json([
+                'message' => 'Invoice not found.',
+                'status' => 404
+            ], 404);
+        }
+
         $invoice->delete();
 
-        return response(['message' => 'Invoice deleted successfully.', 'status' => 200], 200);
+        return response()->json([
+            'message' => 'Invoice deleted successfully.',
+            'status' => 202
+        ], 202);
     }
 }

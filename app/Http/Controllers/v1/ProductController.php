@@ -37,8 +37,17 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Product $product)
+    public function show($id)
     {
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'Product not found.',
+                'status' => 404
+            ], 404);
+        }
+
         return new ProductResource($product);
     }
 
@@ -46,20 +55,44 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProductRequest $request, Product $product)
+    public function update(UpdateProductRequest $request, $id)
     {
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'Payment not found.',
+                'status' => 404
+            ], 404);
+        }
+
         $product->update($request->all());
 
-        return response(['message' => 'Product updated successfully.', 'status' => 200], 200);
+        return response()->json([
+            'message' => 'Product updated successfully.',
+            'status' => 202
+        ], 202);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
+        $product = Product::find($id);
+
+        if (!$product) {
+            return response()->json([
+                'message' => 'Payment not found.',
+                'status' => 404
+            ], 404);
+        }
+
         $product->delete();
 
-        return response(['message' => 'Product deleted successfully.', 'status' => 200], 200);
+        return response()->json([
+            'message' => 'Product deleted successfully.',
+            'status' => 202
+        ], 202);
     }
 }

@@ -23,48 +23,51 @@ class InvoiceProductController extends Controller
 
     public function show($id)
     {
-        $item = InvoiceProduct::find($id);
+        $product = InvoiceProduct::find($id);
 
-        if (!$item) {
+        if (!$product) {
             return response()->json([
-                'message' => 'Invoice product not found.',
+                'message' => 'Invoice Product not found.',
                 'status' => 404
             ], 404);
         }
 
-        return new InvoiceProductResource($item);
+        return new InvoiceProductResource($product);
     }
 
     public function update(UpdateInvoiceProductRequest $request, $id) {
-        $item = InvoiceProduct::find($id);
+        $product = InvoiceProduct::find($id);
 
-        if (!$item) {
+        if (!$product) {
             return response()->json([
-                'message' => 'Invoice product not found.',
+                'message' => 'Invoice Product not found.',
                 'status' => 404
             ], 404);
         }
 
-        $item->update($request->all());
+        $product->update($request->all());
 
-        return new InvoiceProductResource($item);
+        return response()->json([
+            'message' => 'Invoice Product successfully updated.',
+            'status' => 202
+        ], 202);
     }
 
     public function destroy($id) {
-        $item = InvoiceProduct::find($id);
+        $product = InvoiceProduct::find($id);
 
-        if (!$item) {
+        if (!$product) {
             return response()->json([
-                'message' => 'Invoice product not found.',
+                'message' => 'Invoice Product not found.',
                 'status' => 404
             ], 404);
         }
 
-        $item->delete();
+        $product->delete();
 
         return response()->json([
-            'message' => 'Invoice product deleted successfully.',
-            'status' => 200
-        ], 200);
+            'message' => 'Invoice Product successfully deleted.',
+            'status' => 202
+        ], 202);
     }
 }

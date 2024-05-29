@@ -9,6 +9,7 @@ use App\Http\Requests\v1\UpdateCustomerRequest;
 use App\Http\Resources\v1\CustomerCollection;
 use App\Http\Resources\v1\CustomerResource;
 use App\Models\Customer;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class CustomerController extends Controller
@@ -39,24 +40,43 @@ class CustomerController extends Controller
     public function store(StoreCustomerRequest $request)
     {
         if (Customer::where('phone', $request->phone)->exists()) {
-            return response(['message' => 'Customer with such phone already exists.', 'status' => 409], 409);
+            return response()->json([
+                'message' => 'Customer with such phone already exists.',
+                'status' => 409
+            ], 409);
         }
 
         if (Customer::where('vat', $request->vat)->exists()) {
-            return response(['message' => 'Customer with such VAT already exists.', 'status' => 409], 409);
+            return response()->json([
+                'message' => 'Customer with such VAT already exists.',
+                'status' => 409
+            ], 409);
         }
 
         if (Customer::where('email', $request->email)->exists()) {
-            return response(['message' => 'Customer with such email already exists.', 'status' => 409], 409);
+            return response()->json([
+                'message' => 'Customer with such email already exists.',
+                'status' => 409
+            ], 409);
         }
+
         return new CustomerResource(Customer::create($request->all()));
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Customer $customer, Request $request)
+    public function show($id, Request $request)
     {
+        $customer = Customer::find($id);
+
+        if (!$customer) {
+            return response()->json([
+                'message' => 'Customer not found.',
+                'status' => 404
+            ], 404);
+        }
+
         $includeInvoices = $request->query('includeInvoices');
 
         if ($includeInvoices) {
@@ -69,20 +89,44 @@ class CustomerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCustomerRequest $request, Customer $customer)
+    public function update(UpdateCustomerRequest $request, $id)
     {
+        $customer = Customer::find($id);
+
+        if (!$customer) {
+            return response()->json([
+                'message' => 'Customer not found.',
+                'status' => 404
+            ], 404);
+        }
+
         $customer->update($request->all());
 
-        return response(['message' => 'Successfully updated.', 'status' => 200], 200);
+        return response()->json([
+            'message' => 'Customer successfully updated.',
+            'status' => 202
+        ], 202);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Customer $customer)
+    public function destroy($id)
     {
+        $customer = Customer::find($id);
+
+        if (!$customer) {
+            return response()->json([
+                'message' => 'Customer not found.',
+                'status' => 404
+            ], 404);
+        }
+
         $customer->delete();
 
-        return response(['message' => 'Customer deleted successfully.', 'status' => 200], 200);
+        return response()->json([
+            'message' => 'Customer deleted successfully.',
+            'status' => 202
+        ], 202);
     }
 }

@@ -24,7 +24,6 @@ class PaymentController extends Controller
      */
     public function store(StorePaymentRequest $request)
     {
-
         if (Payment::where('ref_id', $request->ref_id)->exists()) {
             return response()->json([
                 'message' => 'Payment with such Ref ID already exists.',
@@ -38,22 +37,27 @@ class PaymentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Payment $payment)
+    public function show($id)
     {
-        if ($payment) {
+        $payment = Payment::find($id);
+
+        if (!$payment) {
             return response()->json([
                 'message' => 'Payment not found.',
                 'status' => 404
             ], 404);
         }
+
         return new PaymentResource($payment);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdatePaymentRequest $request, Payment $payment)
+    public function update(UpdatePaymentRequest $request, $id)
     {
+        $payment = Payment::find($id);
+
         if (!$payment) {
             return response()->json([
                 'message' => 'Payment not found.',
